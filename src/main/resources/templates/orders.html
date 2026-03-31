@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>주문 현황 | Dessert Trade</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="page sub-page">
+    <nav class="top-nav slim">
+        <div class="brand">디저트무역</div>
+        <div class="menu">
+            <a href="/">홈</a>
+            <a href="/orders">주문 현황</a>
+            <a href="/admin">관리자</a>
+        </div>
+    </nav>
+
+    <main class="sub-layout">
+        <section class="card wide">
+            <div class="section-title">
+                <h2>고객용 전체 주문 현황</h2>
+                <p>
+                    고객 화면에서는 전체 흐름만 볼 수 있도록 구성했습니다.
+                    <strong>주문 ID, 상세 시각, 개별 제어 버튼은 관리자 화면에서만 확인</strong>할 수 있습니다.
+                </p>
+            </div>
+
+            <div class="customer-summary-grid">
+                <div class="summary-item">
+                    <span>현재 통관 상태</span>
+                    <strong th:text="
+                            ${product.customsStatus.name() == 'BEFORE_CUSTOMS'} ? '통관전' :
+                            (${product.customsStatus.name() == 'CUSTOMS_PENDING'} ? '통관대기중' :
+                            (${product.customsStatus.name() == 'CLEARED'} ? '통관완료' :
+                            (${product.customsStatus.name() == 'MANUFACTURING'} ? '제조중' :
+                            (${product.customsStatus.name() == 'SHIPPING'} ? '출고중' : '통관실패'))))
+                    ">통관대기중</strong>
+                </div>
+                <div class="summary-item">
+                    <span>입항 예정 수량</span>
+                    <strong th:text="${product.expectedStock}">10000</strong>
+                </div>
+                <div class="summary-item">
+                    <span>확보 수량</span>
+                    <strong th:text="${product.securedStock}">0</strong>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>고객사</th>
+                        <th>주문 수량</th>
+                        <th>주문 상태</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="order : ${orders}">
+                        <td th:text="${order.customerName}">A 베이커리</td>
+                        <td th:text="${order.quantity}">3000</td>
+                        <td>
+                            <span class="status"
+                                  th:text="${order.status}"
+                                  th:classappend="${order.status.name() == 'CONFIRMED'} ? ' confirmed' :
+                                                  (${order.status.name() == 'WAITLIST'} ? ' waitlist' :
+                                                  (${order.status.name() == 'CANCELLED'} ? ' cancelled' : ' pending'))">
+                            </span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

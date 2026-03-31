@@ -1,0 +1,10 @@
+{
+  "id": 1,
+  "name": "두바이 쫀득쿠키",
+  "description": "두바이 감성 초코 디저트",
+  "expectedStock": 10000,
+  "securedStock": 0,
+  "customsStatus": "BEFORE_CUSTOMS",
+  "origin": "Türkiye",
+  "flavorNote": "달달함 · 쫀득함 · 고소한 풍미"
+}

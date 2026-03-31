@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>디저트무역 | 프리미엄 디저트 카탈로그</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<div id="noticeModal" class="notice-modal">
+    <div class="notice-box">
+        <button class="notice-close" onclick="closeNotice()">×</button>
+
+        <h2>공지사항</h2>
+        <p>
+            안녕하세요, 디저트무역입니다.<br>
+            <br>
+            최근 ‘두바이 쫀득쿠키’ 열풍으로 인해 핵심 원료인 카다이프 수요가 급증하면서,<br>
+            현재 수입 물량 확보 및 통관 과정에서 일시적인 수급 불안정이 발생하고 있습니다.<br>
+            <br>
+            이에 따라 당사는 고객 여러분의 수요에 대응하기 위해<br>
+            카다이프 상품에 대해 사전 예약 주문을 진행하고 있습니다.<br>
+            <br>
+            해당 상품은<br>
+            통관 약 3일, 이후 제조 및 출고 준비에 약 1일 정도가 소요될 예정이며,<br>
+            실제 입고 수량 및 제조 상황에 따라 일부 예약 물량은 순차적으로 조정될 수 있습니다.<br>
+            <br>
+            또한 사전 예약에 참여해주신 고객분들께는<br>
+            추후 사용 가능한 할인 쿠폰을 제공해드릴 예정입니다.<br>
+            <br>
+            앞으로도 디저트무역은 안정적인 공급과 신뢰 있는 서비스를 바탕으로,<br>
+            브랜드 가치를 함께 만들어갈 수 있도록 노력하겠습니다.<br>
+            <br>
+            감사합니다.<br>
+        </p>
+
+        <div class="notice-actions">
+            <button type="button" class="notice-hide-today" onclick="hideNoticeToday()">오늘 하루 보지 않기</button>
+            <button type="button" class="notice-confirm" onclick="closeNotice()">닫기</button>
+        </div>
+    </div>
+</div>
+
+<div class="page bakery-home">
+    <header class="brand-hero">
+        <nav class="top-nav bakery-nav">
+            <div class="brand-block">
+                <div class="brand-mark">DT</div>
+                <div>
+                    <div class="brand">디저트무역</div>
+                    <div class="brand-sub">Premium Dessert Trading House</div>
+                </div>
+            </div>
+            <div class="menu">
+                <a href="/">홈</a>
+                <a href="/orders">주문 현황</a>
+                <a href="/admin">관리자</a>
+            </div>
+        </nav>
+
+        <div class="bakery-hero-panel">
+            <div class="hero-copy">
+                <span class="chip">SIGNATURE INGREDIENTS · SEASONAL DESSERTS · B2B SUPPLY</span>
+                <h1>한층 더 따뜻하고<br>풍성한 디저트무역 카탈로그</h1>
+                <p>
+                    수입 식자재와 시즌 디저트를 함께 제안하는 디저트무역 홈 화면입니다.
+                    여러 상품을 먼저 둘러보고, <strong>두바이 쫀득쿠키 상품을 클릭하면 같은 페이지 안에서 카드형 상세 창</strong>이 열리도록 구성했습니다.
+                </p>
+                <div class="hero-badges">
+                    <span class="badge soft">프리미엄 원물</span>
+                    <span class="badge soft">시즌 디저트</span>
+                    <span class="badge soft">B2B 선주문 데모</span>
+                </div>
+            </div>
+
+            <div class="hero-showcase">
+                <div class="showcase-frame">
+                    <div class="showcase-bread bread-a"></div>
+                    <div class="showcase-bread bread-b"></div>
+                    <div class="showcase-bread bread-c"></div>
+                    <div class="showcase-leaf leaf-a"></div>
+                    <div class="showcase-leaf leaf-b"></div>
+                    <div class="showcase-stamp">FROM<br>ISTANBUL</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="content-stack">
+        <section class="card wide bakery-section">
+            <div class="section-head between">
+                <div class="section-title">
+                    <h2>대표 상품 카탈로그</h2>
+                    <p>베이커리 브랜드 무드의 따뜻한 카탈로그 화면입니다. 카드를 누르면 상세 창이 열립니다.</p>
+                </div>
+                <div class="section-note">오늘의 추천 · 4 items</div>
+            </div>
+
+            <div class="catalog-grid">
+                <button type="button"
+                        class="catalog-card"
+                        th:each="item : ${catalogProducts}"
+                        th:attr="data-id=${item.id},data-name=${item.name}"
+                        onclick="selectProduct(this)">
+                    <div class="catalog-visual" th:classappend="' visual-' + ${item.imageType}">
+                        <div class="visual-label" th:text="${item.category}">원물</div>
+                        <div class="pastry pastry-1"></div>
+                        <div class="pastry pastry-2"></div>
+                        <div class="pastry pastry-3"></div>
+                    </div>
+                    <div class="catalog-body">
+                        <div class="catalog-topline">
+                            <span class="catalog-badge" th:text="${item.badge}">BEST</span>
+                            <span class="catalog-arrow">상세 보기</span>
+                        </div>
+                        <h3 th:text="${item.name}">튀르키예산 카다이프</h3>
+                        <p th:text="${item.shortDescription}">상품 설명</p>
+                    </div>
+                </button>
+            </div>
+        </section>
+
+        <section class="card wide bakery-section">
+            <div class="section-title">
+                <h2>브랜드 소개</h2>
+                <p>
+                    디저트무역은 프리미엄 식자재와 시그니처 디저트를 연결하는 가상의 무역사입니다.
+                    이번 데모에서는 수입 원물 <strong>카다이프</strong>를 중심으로 선주문 흐름을 보여줍니다.
+                </p>
+            </div>
+            <div class="story-grid">
+                <div class="story-box">
+                    <span>01</span>
+                    <strong>브랜드 톤</strong>
+                    <p>따뜻하고 고급스러운 베이커리 무드</p>
+                </div>
+                <div class="story-box">
+                    <span>02</span>
+                    <strong>상품 흐름</strong>
+                    <p>카탈로그 → 상품 선택 → 카드형 상세 창</p>
+                </div>
+                <div class="story-box">
+                    <span>03</span>
+                    <strong>과제 포인트</strong>
+                    <p>선주문 · 통관 · 확보 수량 정책 시연</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="productModal" class="modal-overlay">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeProductModal()">×</button>
+
+            <div id="featured-content" class="featured-modal" data-name="튀르키예산 카다이프">
+                <div class="featured-top">
+                    <div class="featured-copy">
+                        <span class="chip">Dubai Crispy Cookie Craze</span>
+                        <h2>두바이 쫀득쿠키 선주문 상세</h2>
+                        <p>
+                            시장 반응은 빠르지만 통관과 확보 수량은 불확실한 상황을 가정했습니다.
+                            주문은 먼저 접수하고, 통관 완료 후 확보 수량 기준으로 확정합니다.
+                        </p>
+                        <div class="hero-badges">
+                            <span class="badge soft">
+                                    통관 상태:
+                                    <strong th:text="
+                                        ${featuredProduct.customsStatus.name() == 'BEFORE_CUSTOMS'} ? '통관전' :
+                                        (${featuredProduct.customsStatus.name() == 'CUSTOMS_PENDING'} ? '통관대기중' :
+                                        (${featuredProduct.customsStatus.name() == 'CLEARED'} ? '통관완료' :
+                                        (${featuredProduct.customsStatus.name() == 'MANUFACTURING'} ? '제조중' :
+                                        (${featuredProduct.customsStatus.name() == 'SHIPPING'} ? '출고중' : '통관실패'))))
+                                    ">통관전</strong>
+                            </span>
+                            <span class="badge soft">입항 예정: <strong th:text="${featuredProduct.expectedStock}">10000</strong>개</span>
+                            <span class="badge soft">확보 수량: <strong th:text="${featuredProduct.securedStock}">1000</strong>개</span>
+                        </div>
+                    </div>
+
+                    <div class="hero-card modal-hero-card">
+                        <div class="cookie-visual">
+                            <div class="plate"></div>
+                            <div class="cookie cookie-1"></div>
+                            <div class="cookie cookie-2"></div>
+                            <div class="cookie cookie-3"></div>
+                            <div class="cream"></div>
+                            <div class="pistachio pistachio-1"></div>
+                            <div class="pistachio pistachio-2"></div>
+                            <div class="pistachio pistachio-3"></div>
+                        </div>
+                        <div class="product-meta">
+                            <h3 th:text="${featuredProduct.name}">두바이 쫀득쿠키</h3>
+                            <p th:text="${featuredProduct.description}">두바이 감성 초코 디저트</p>
+                            <div class="meta-row">
+                                <span>Origin</span>
+                                <strong th:text="${featuredProduct.origin}">Türkiye</strong>
+                            </div>
+                            <div class="meta-row">
+                                <span>Taste Note</span>
+                                <strong th:text="${featuredProduct.flavorNote}">달달함 · 쫀득함  · 고소함</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-grid modal-grid">
+                    <section class="card order-form-card">
+                        <div class="section-title">
+                            <h2>선주문 접수</h2>
+                            <p>주문은 우선 대기 상태로 저장되고, 통관 완료 후 확보 수량 기준으로 확정됩니다.</p>
+                        </div>
+
+                        <form id="orderForm" class="stack-form">
+                            <label>
+                                <span>고객사명</span>
+                                <input type="text" id="customerName" placeholder="예: A 베이커리">
+                            </label>
+                            <label>
+                                <span>수량</span>
+                                <input type="number" id="quantity" min="1" placeholder="예: 3000">
+                            </label>
+                            <button type="button" id="preOrderBtn" class="btn btn-primary">선주문 넣기</button>
+                        </form>
+                    </section>
+
+                    <section class="card summary-card">
+                        <div class="section-title">
+                            <h2>주문 요약</h2>
+                            <p>상태 변화 중심으로 시연할 수 있게 단순한 정책으로 구성했습니다.</p>
+                        </div>
+
+                        <div class="summary-list">
+                            <div class="summary-item">
+                                <span>총 주문 수</span>
+                                <strong th:text="${#lists.size(orders)}">0</strong>
+                            </div>
+                            <div class="summary-item">
+                                <span>누적 알림 수</span>
+                                <strong th:text="${#lists.size(notifications)}">0</strong>
+                            </div>
+                            <div class="summary-item">
+                                <span>정책</span>
+                                <strong>선착순 확정</strong>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="card table-card wide">
+                        <div class="section-title">
+                            <h2>최근 주문 현황</h2>
+                            <p>홈에서는 흐름 확인용 요약만 보여주고, 주문 상세 정보는 관리자 탭에서 확인합니다.</p>
+                        </div>
+
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th>고객사</th>
+                                    <th>수량</th>
+                                    <th>상태</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="order : ${orders}">
+                                    <td th:text="${order.customerName}">A 베이커리</td>
+                                    <td th:text="${order.quantity}">3000</td>
+                                    <td>
+                                        <span class="status"
+                                              th:text="
+                                                  ${order.status.name() == 'PENDING'} ? '예약접수' :
+                                                  (${order.status.name() == 'CONFIRMED'} ? '주문확정' :
+                                                  (${order.status.name() == 'WAITLIST'} ? '대기' : '취소'))
+                                              "
+                                              th:classappend="${order.status.name() == 'CONFIRMED'} ? ' confirmed' :
+                                                              (${order.status.name() == 'WAITLIST'} ? ' waitlist' :
+                                                              (${order.status.name() == 'CANCELLED'} ? ' cancelled' : ' pending'))">
+                                            예약접수
+                                        </span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="agreementModal" class="modal-overlay">
+    <div class="agreement-modal-card">
+        <button type="button" class="modal-close" onclick="closeAgreementModal()">×</button>
+
+        <div class="agreement-header">
+            <h3>주문 전 확인</h3>
+            <p>
+                본 상품은 수입 식자재로 식약처 검역 기준에 따라 통관이 제한될 수 있습니다.<br>
+                검역 불합격 시 해당 물량은 전량 폐기될 수 있으며,<br>
+                이 경우 선주문 건은 자동 취소 및 전액 환불 처리됩니다.<br><br>
+
+                주문은 통관 완료 후 실제 확보 수량 기준으로 선착순 확정되며,<br>
+                검역 및 제조 과정에서 일정 지연 또는 일부 주문 미확정이 발생할 수 있습니다.
+            </p>
+        </div>
+
+        <label class="agreement-check-row">
+            <input type="checkbox" id="agreementCheck">
+            <span>
+                <strong>검역 통과시 주문확정</strong> 조건에 동의합니다.
+            </span>
+        </label>
+
+        <div class="agreement-actions">
+            <button type="button" class="btn btn-light" onclick="closeAgreementModal()">취소</button>
+            <button type="button" id="finalSubmitBtn" class="btn btn-primary" disabled>
+                동의 후 주문 확정
+            </button>
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

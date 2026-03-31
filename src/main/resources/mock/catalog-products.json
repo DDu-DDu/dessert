@@ -1,0 +1,34 @@
+[
+  {
+    "id": 1,
+    "name": "두바이 쫀득쿠키",
+    "shortDescription": "두바이 감성 초코 디저트",
+    "category": "수입 원물",
+    "badge": "HOT",
+    "imageType": "kadaif"
+  },
+  {
+    "id": 2,
+    "name": "버터떡",
+    "shortDescription": "쫀득한 떡에 고소한 버터 풍미를 더한 부드럽고 깊은 맛의 디저트",
+    "category": "베이커리",
+    "badge": "NEW",
+    "imageType": "croissant"
+  },
+  {
+    "id": 3,
+    "name": "피스타치오 마카롱",
+    "shortDescription": "은은한 견과 향과 부드러운 크림이 어우러진 디저트",
+    "category": "시즌 디저트",
+    "badge": "BEST",
+    "imageType": "macaron"
+  },
+  {
+    "id": 4,
+    "name": "흑임자 크림 찹쌀케이크",
+    "shortDescription": "고소한 흑임자 크림과 쫀득한 찹쌀 시트가 어우러진 꾸덕한 디저트",
+    "category": "베이커리",
+    "badge": "BEST",
+    "imageType": "powder"
+  }
+]

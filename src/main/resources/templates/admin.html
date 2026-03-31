@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>관리자 대시보드 | 디저트무역</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="page admin-dashboard-page">
+    <nav class="top-nav admin-dashboard-nav">
+        <div class="brand-block">
+            <div class="brand-mark">DT</div>
+            <div>
+                <div class="brand">디저트무역 관리자</div>
+                <div class="brand-sub">Administrator Monitoring Dashboard</div>
+            </div>
+        </div>
+        <div class="menu">
+            <a href="/">홈</a>
+            <a href="/orders">주문 현황</a>
+            <a href="/admin">관리자</a>
+        </div>
+    </nav>
+
+    <main class="admin-dashboard-wrap">
+        <section class="admin-title-area">
+            <p class="admin-kicker">관리자 대시보드(UI/UX) 설계</p>
+            <h1>물류팀장 관점: 실시간 통제 및 리스크 모니터링 뷰</h1>
+            <div class="admin-system-bar">
+                <div class="admin-system-left">
+                    <span class="admin-dot"></span>
+                    <span>디저트무역 선주문 시스템</span>
+                    <span class="admin-divider">|</span>
+                    <span>Administrator View</span>
+                </div>
+                <div class="admin-system-right">
+                    <span class="admin-live">● 시스템 정상 가동 중</span>
+                    <span>권한: 물류팀장 (Master)</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="admin-alert-banner">
+            <strong>[상태 알림]</strong>
+            <span>
+                현재 상품 진행 상태:
+                <strong th:text="
+                    ${product.customsStatus.name() == 'BEFORE_CUSTOMS'} ? '통관전' :
+                    (${product.customsStatus.name() == 'CUSTOMS_PENDING'} ? '통관대기중' :
+                    (${product.customsStatus.name() == 'CLEARED'} ? '통관완료' :
+                    (${product.customsStatus.name() == 'MANUFACTURING'} ? '제조중' :
+                    (${product.customsStatus.name() == 'SHIPPING'} ? '출고중' : '통관실패'))))
+                ">통관대기중</strong>
+            </span>
+            <span class="admin-alert-risk">
+                리스크 레벨:
+                <strong th:text="${product.customsStatus.name() == 'FAILED'} ? '높음' :
+                                 (${product.customsStatus.name() == 'CUSTOMS_PENDING'} ? '중간' : '보통')">중간</strong>
+            </span>
+        </section>
+
+        <section class="admin-kpi-grid">
+            <div class="admin-kpi-card">
+                <div class="admin-kpi-label">확보 재고 / 예정 재고</div>
+                <div class="admin-kpi-value">
+                    <span th:text="${product.securedStock}">3000</span>
+                    <small>/ <span th:text="${product.expectedStock}">10000</span></small>
+                </div>
+                <div class="admin-kpi-sub">현재 확보된 수량 기준</div>
+            </div>
+
+            <div class="admin-kpi-card">
+                <div class="admin-kpi-label">전체 주문 건수</div>
+                <div class="admin-kpi-value">
+                    <span th:text="${#lists.size(orders)}">12</span>
+                    <small>건</small>
+                </div>
+                <div class="admin-kpi-sub">예약 주문 누적 현황</div>
+            </div>
+
+            <div class="admin-kpi-card">
+                <div class="admin-kpi-label">확정 / 대기 비율</div>
+                <div class="admin-kpi-value">실시간 모니터링</div>
+                <div class="admin-kpi-sub">주문 상태별 변동 확인</div>
+            </div>
+
+            <div class="admin-kpi-card">
+                <div class="admin-kpi-label">알림 로그 수</div>
+                <div class="admin-kpi-value">
+                    <span th:text="${#lists.size(notifications)}">15</span>
+                    <small>건</small>
+                </div>
+                <div class="admin-kpi-sub">운영 이벤트 누적</div>
+            </div>
+        </section>
+
+        <section class="admin-control-grid">
+            <div class="admin-panel">
+                <div class="admin-panel-header">
+                    <h2>상태 제어 패널</h2>
+                    <p>물류 진행 단계를 직접 변경합니다.</p>
+                </div>
+
+                <div class="admin-status-buttons">
+                    <button class="admin-dark-btn" onclick="updateCustomsStatus('BEFORE_CUSTOMS')">통관전</button>
+                    <button class="admin-dark-btn" onclick="updateCustomsStatus('CUSTOMS_PENDING')">통관대기중</button>
+                    <button class="admin-dark-btn admin-accent" onclick="updateCustomsStatus('CLEARED')">통관완료</button>
+                    <button class="admin-dark-btn" onclick="updateCustomsStatus('MANUFACTURING')">제조중</button>
+                    <button class="admin-dark-btn" onclick="updateCustomsStatus('SHIPPING')">출고중</button>
+                    <button class="admin-dark-btn admin-danger" onclick="updateCustomsStatus('FAILED')">통관실패</button>
+                </div>
+            </div>
+
+            <div class="admin-panel">
+                <div class="admin-panel-header">
+                    <h2>확보 수량 조정</h2>
+                    <p>확보된 재고 기준으로 주문 확정 가능 범위를 관리합니다.</p>
+                </div>
+
+                <div class="admin-stock-box">
+                    <input type="number" id="securedStock" min="0" th:value="${product.securedStock}">
+                    <button class="admin-dark-btn admin-accent" onclick="updateSecuredStock()">적용</button>
+                </div>
+            </div>
+
+            <div class="admin-panel">
+                <div class="admin-panel-header">
+                    <h2>주문 확정 실행</h2>
+                    <p>통관완료 상태에서만 예약 주문을 선착순 기준으로 확정합니다.</p>
+                </div>
+
+                <button
+                        id="confirmOrdersBtn"
+                        class="admin-kill-btn"
+                        onclick="confirmOrders()"
+                        th:attr="data-status=${product.customsStatus}"
+                        th:disabled="${product.customsStatus.name() != 'CLEARED'}">
+                    주문 확정 실행
+                </button>
+
+                <p class="admin-help"
+                   th:if="${product.customsStatus.name() != 'CLEARED'}">
+                    주문 확정은 통관완료 상태에서만 가능합니다.
+                </p>
+            </div>
+        </section>
+
+        <section class="admin-monitor-grid">
+            <div class="admin-panel">
+                <div class="admin-panel-header">
+                    <h2>진행 타임라인</h2>
+                    <p>현재 상품 진행 흐름을 단계별로 확인합니다.</p>
+                </div>
+
+                <div class="admin-timeline">
+                    <div class="timeline-step" th:classappend="${product.customsStatus.name() == 'BEFORE_CUSTOMS'} ? ' active'">
+                        <span class="step-dot"></span>
+                        <span>통관전</span>
+                    </div>
+                    <div class="timeline-step" th:classappend="${product.customsStatus.name() == 'CUSTOMS_PENDING'} ? ' active'">
+                        <span class="step-dot"></span>
+                        <span>통관대기중</span>
+                    </div>
+                    <div class="timeline-step" th:classappend="${product.customsStatus.name() == 'CLEARED'} ? ' active'">
+                        <span class="step-dot"></span>
+                        <span>통관완료</span>
+                    </div>
+                    <div class="timeline-step" th:classappend="${product.customsStatus.name() == 'MANUFACTURING'} ? ' active'">
+                        <span class="step-dot"></span>
+                        <span>제조중</span>
+                    </div>
+                    <div class="timeline-step" th:classappend="${product.customsStatus.name() == 'SHIPPING'} ? ' active'">
+                        <span class="step-dot"></span>
+                        <span>출고중</span>
+                    </div>
+                    <div class="timeline-step danger" th:classappend="${product.customsStatus.name() == 'FAILED'} ? ' active'">
+                        <span class="step-dot"></span>
+                        <span>통관실패</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="admin-panel">
+                <div class="admin-panel-header">
+                    <h2>자동 리스크 알림</h2>
+                    <p>현 시점에서 체크할 수 있는 주요 운영 포인트입니다.</p>
+                </div>
+
+                <ul class="admin-risk-list">
+                    <li>통관 상태가 지연될 경우 예약 주문 대기 시간이 증가할 수 있습니다.</li>
+                    <li>확보 수량이 예약 수량보다 적으면 일부 주문은 대기 처리됩니다.</li>
+                    <li>통관실패 시 대기/예약 주문은 자동 취소됩니다.</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="admin-panel admin-log-panel">
+            <div class="admin-panel-header">
+                <h2>관리자 전용 주문 상세 현황</h2>
+                <p>주문 ID, 시각, 상태를 포함한 상세 데이터입니다.</p>
+            </div>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>고객사</th>
+                        <th>수량</th>
+                        <th>상태</th>
+                        <th>주문 시각</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="order : ${orders}">
+                        <td th:text="${order.id}">101</td>
+                        <td th:text="${order.customerName}">A 베이커리</td>
+                        <td th:text="${order.quantity}">3000</td>
+                        <td>
+                            <span class="status"
+                                  th:text="
+                                      ${order.status.name() == 'PENDING'} ? '예약접수' :
+                                      (${order.status.name() == 'CONFIRMED'} ? '주문확정' :
+                                      (${order.status.name() == 'WAITLIST'} ? '대기' : '취소'))
+                                  "
+                                  th:classappend="${order.status.name() == 'CONFIRMED'} ? ' confirmed' :
+                                                  (${order.status.name() == 'WAITLIST'} ? ' waitlist' :
+                                                  (${order.status.name() == 'CANCELLED'} ? ' cancelled' : ' pending'))">
+                                예약접수
+                            </span>
+                        </td>
+                        <td th:text="${#temporals.format(order.orderedAt, 'yyyy-MM-dd HH:mm')}">2026-03-31 10:00</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="admin-panel admin-log-panel">
+            <div class="admin-panel-header">
+                <h2>시스템 알림 로그 및 모니터링</h2>
+                <p>상태 변화 및 운영 이벤트를 시간순으로 확인합니다.</p>
+            </div>
+
+            <div class="timeline">
+                <div class="timeline-item" th:each="n : ${notifications}">
+                    <div class="dot"></div>
+                    <div class="timeline-body">
+                        <strong th:text="${n.message}">주문이 접수되었습니다.</strong>
+                        <span th:text="${#temporals.format(n.createdAt, 'yyyy-MM-dd HH:mm')}">2026-03-31 10:01</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

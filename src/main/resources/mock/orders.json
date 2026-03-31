@@ -1,0 +1,18 @@
+[
+  {
+    "id": 101,
+    "productId": 1,
+    "customerName": "A 베이커리",
+    "quantity": 500,
+    "status": "PENDING",
+    "orderedAt": "2026-03-31T09:30:00"
+  },
+  {
+    "id": 102,
+    "productId": 1,
+    "customerName": "B 디저트랩",
+    "quantity": 100,
+    "status": "PENDING",
+    "orderedAt": "2026-03-31T10:10:00"
+  }
+]
