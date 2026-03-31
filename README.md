@@ -15,7 +15,7 @@
 1. IntelliJ에서 프로젝트 열기  
 2. Gradle 프로젝트로 import  
 3. DessertApplication 실행
-4. localhost:8080 접속
+4. http://localhost:8080 접속
 
 ---
 
